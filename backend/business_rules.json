@@ -1,9 +1,10 @@
 {
   "loan_rules": {
     "personal_loan": {
-      "minimum_salary": 30000,
-      "minimum_age": 21,
-      "credit_score": 700
+      "minimum_salary": 40000,
+      "minimum_age": 20,
+      "credit_score": 700,
+      "maximum_age": 50
     },
     "gold_loan": {
       "minimum_age": 18,

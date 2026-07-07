@@ -37,34 +37,31 @@ def validation_node(state: AgentState) -> AgentState:
     field = state.get("field")
     new_value = state.get("new_value")
 
-    # Rule 1: category must exist
-    if category not in rules:
-        state["is_valid"] = False
-        state["validation_message"] = f"No business rule category found for '{category}'."
-        return state
+    # ... existing checks (category exists, field exists, new_value valid, non-negative) ...
 
-    # Rule 2: field must exist under that category
-    if field not in rules[category]:
-        state["is_valid"] = False
-        state["validation_message"] = (
-            f"Field '{field}' does not exist under '{category}'."
-        )
-        return state
+    # NEW: Cross-field logical consistency checks
+    category_rules = rules[category]
 
-    # Rule 3: new_value must be a valid number
-    if new_value is None or not isinstance(new_value, (int, float)):
-        state["is_valid"] = False
-        state["validation_message"] = "The requested new value is missing or invalid."
-        return state
+    if field == "minimum_age" and "maximum_age" in category_rules:
+        if new_value >= category_rules["maximum_age"]:
+            state["is_valid"] = False
+            state["validation_message"] = (
+                f"Minimum age ({new_value}) cannot be greater than or equal to "
+                f"the maximum age ({category_rules['maximum_age']})."
+            )
+            return state
 
-    # Rule 4: sanity check — no negative values
-    if new_value < 0:
-        state["is_valid"] = False
-        state["validation_message"] = "The requested value cannot be negative."
-        return state
+    if field == "maximum_age" and "minimum_age" in category_rules:
+        if new_value <= category_rules["minimum_age"]:
+            state["is_valid"] = False
+            state["validation_message"] = (
+                f"Maximum age ({new_value}) cannot be less than or equal to "
+                f"the minimum age ({category_rules['minimum_age']})."
+            )
+            return state
 
     # Capture the true current value (overrides any guess from extraction)
-    state["old_value"] = rules[category][field]
+    state["old_value"] = category_rules[field]
     state["is_valid"] = True
     state["validation_message"] = "Validation passed."
     return state

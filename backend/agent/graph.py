@@ -1,6 +1,22 @@
 from langgraph.graph import StateGraph, END
 from .state import AgentState
-from .nodes import extraction_node, validation_node, update_node, response_node
+from .nodes import (
+    extraction_node,
+    validation_node,
+    update_node,
+    response_node,
+    show_node,
+    no_intent_node,
+)
+
+
+def route_after_extraction(state: AgentState) -> str:
+    action = state.get("action")
+    if action == "none":
+        return "no_intent"
+    if action == "show":
+        return "show"
+    return "validate"
 
 
 def route_after_validation(state: AgentState) -> str:
@@ -14,16 +30,27 @@ def build_agent():
     graph.add_node("validate", validation_node)
     graph.add_node("update", update_node)
     graph.add_node("response", response_node)
+    graph.add_node("show", show_node)
+    graph.add_node("no_intent", no_intent_node)
 
     graph.set_entry_point("extract")
-    graph.add_edge("extract", "validate")
+
+    graph.add_conditional_edges(
+        "extract",
+        route_after_extraction,
+        {"no_intent": "no_intent", "show": "show", "validate": "validate"},
+    )
+
     graph.add_conditional_edges(
         "validate",
         route_after_validation,
         {"update": "update", "response": "response"},
     )
+
     graph.add_edge("update", "response")
     graph.add_edge("response", END)
+    graph.add_edge("show", END)
+    graph.add_edge("no_intent", END)
 
     return graph.compile()
 

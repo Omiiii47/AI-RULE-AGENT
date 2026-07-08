@@ -32,22 +32,31 @@ Return ONLY a JSON object with these keys:
 - category: the loan/product category, snake_case (e.g. "personal_loan", "gold_loan"). null if not mentioned or not applicable.
 - field: the rule field being changed or asked about, snake_case (e.g. "minimum_salary", "minimum_age", "credit_score", "loan_limit"). null if the whole category is being asked about or not applicable.
 - old_value: number if mentioned by the user, otherwise null
-- new_value: number, the target value being requested. null for "show" actions or if not applicable.
+- new_value: the number mentioned in the message. null for "show" actions or if not applicable.
+- is_relative: true if the number is a DELTA to apply on top of the current value
+  (phrases like "by 10000", "by 5 years"), false if the number is the FINAL target value
+  (phrases like "to 40000", "set to 21"). Always false for action "set" or "show".
 - action: one of "increase", "decrease", "set", "show", "none"
   - use "show" when the manager is asking to view/see/list/check current rules.
   - use "none" if the message is small talk, a greeting, or unrelated to business rules (e.g. "Hello", "What's the weather?").
 
 Example input: "Increase personal loan minimum salary to 40000"
-Example output: {"category": "personal_loan", "field": "minimum_salary", "old_value": null, "new_value": 40000, "action": "increase"}
+Example output: {"category": "personal_loan", "field": "minimum_salary", "old_value": null, "new_value": 40000, "is_relative": false, "action": "increase"}
+
+Example input: "Increase the minimum salary of personal loan by 10000"
+Example output: {"category": "personal_loan", "field": "minimum_salary", "old_value": null, "new_value": 10000, "is_relative": true, "action": "increase"}
+
+Example input: "Decrease gold loan minimum age by 2"
+Example output: {"category": "gold_loan", "field": "minimum_age", "old_value": null, "new_value": 2, "is_relative": true, "action": "decrease"}
 
 Example input: "Show personal loan rules"
-Example output: {"category": "personal_loan", "field": null, "old_value": null, "new_value": null, "action": "show"}
+Example output: {"category": "personal_loan", "field": null, "old_value": null, "new_value": null, "is_relative": false, "action": "show"}
 
 Example input: "Hello"
-Example output: {"category": null, "field": null, "old_value": null, "new_value": null, "action": "none"}
+Example output: {"category": null, "field": null, "old_value": null, "new_value": null, "is_relative": false, "action": "none"}
 
 Example input: "What's the weather today?"
-Example output: {"category": null, "field": null, "old_value": null, "new_value": null, "action": "none"}
+Example output: {"category": null, "field": null, "old_value": null, "new_value": null, "is_relative": false, "action": "none"}
 """
 
 
@@ -57,6 +66,7 @@ def extraction_node(state: AgentState) -> AgentState:
     state["field"] = result.get("field")
     state["old_value"] = result.get("old_value")
     state["new_value"] = result.get("new_value")
+    state["is_relative"] = result.get("is_relative", False)
     state["action"] = result.get("action")
     return state
 
@@ -80,6 +90,16 @@ def validation_node(state: AgentState) -> AgentState:
         return state
 
     category_rules = rules[category]
+
+    # Resolve relative changes ("increase by 10000") into an absolute target
+    # value, using the CURRENT value from the JSON — never a stale/guessed one.
+    if state.get("is_relative") and field in category_rules and new_value is not None:
+        current_value = category_rules[field]
+        if state.get("action") == "increase":
+            new_value = current_value + new_value
+        elif state.get("action") == "decrease":
+            new_value = current_value - new_value
+        state["new_value"] = new_value  # overwrite with the resolved absolute value
 
     # Check 2: field must be present and exist under that category
     if not field or field not in category_rules:

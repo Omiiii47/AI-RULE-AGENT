@@ -13,5 +13,20 @@
       "Minimum credit score should be at least 700."
     ],
     "submittedAt": "2026-07-08 14:50:13"
+  },
+  {
+    "applicationId": "ea52fb67-10fe-45bc-aac5-0915fb8cc798",
+    "name": "Sahil Naik",
+    "age": 28,
+    "monthlySalary": 10000.0,
+    "creditScore": 500,
+    "employmentType": "Salaried",
+    "loanAmount": 500000.0,
+    "status": "Rejected",
+    "reasons": [
+      "Minimum monthly salary should be at least \u20b920,000.",
+      "Minimum credit score should be at least 700."
+    ],
+    "submittedAt": "2026-07-08 14:57:59"
   }
 ]

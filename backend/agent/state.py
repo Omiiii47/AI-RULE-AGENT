@@ -9,6 +9,7 @@ class AgentState(TypedDict, total=False):
     field: Optional[str]         # e.g. "minimum_salary"
     old_value: Optional[float]
     new_value: Optional[float]
+    is_relative: Optional[bool]  # True if new_value is a delta ("by X"), not a target ("to X")
     action: Optional[str]        # e.g. "increase" / "decrease" / "set"
 
     # Validation Node output

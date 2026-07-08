@@ -1,0 +1,17 @@
+[
+  {
+    "applicationId": "7329d605-2e67-4415-b989-9c9ff63fdac7",
+    "name": "Om Naik",
+    "age": 22,
+    "monthlySalary": 5000.0,
+    "creditScore": 300,
+    "employmentType": "Salaried",
+    "loanAmount": 200000.0,
+    "status": "Rejected",
+    "reasons": [
+      "Minimum monthly salary should be at least \u20b910,000.",
+      "Minimum credit score should be at least 700."
+    ],
+    "submittedAt": "2026-07-08 14:50:13"
+  }
+]

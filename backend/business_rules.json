@@ -1,7 +1,7 @@
 {
   "loan_rules": {
     "personal_loan": {
-      "minimum_salary": 20000,
+      "minimum_salary": 10000,
       "minimum_age": 21,
       "credit_score": 700
     },

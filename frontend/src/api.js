@@ -6,3 +6,8 @@ export async function sendMessage(message) {
   const res = await axios.post(`${API_URL}/chat`, { message });
   return res.data.response;
 }
+
+export async function applyForLoan(applicantData) {
+  const res = await axios.post(`${API_URL}/apply`, applicantData);
+  return res.data;
+}

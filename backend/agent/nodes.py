@@ -1,6 +1,7 @@
 from .state import AgentState
 from .llm import call_llm_json
 from rules_store import load_rules, save_rules
+from audit_store import append_audit_entry
 
 
 NO_INTENT_MESSAGE = """I couldn't identify a business rule request.
@@ -155,6 +156,14 @@ def update_node(state: AgentState) -> AgentState:
 
     data["loan_rules"][category][field] = state["new_value"]
     save_rules(data)
+
+    append_audit_entry(
+        action="UPDATE",
+        category=category,
+        field=field,
+        old_value=state["old_value"],
+        new_value=state["new_value"],
+    )
 
     state["updated"] = True
     return state

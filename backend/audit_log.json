@@ -1,0 +1,11 @@
+[
+  {
+    "timestamp": "2026-07-08 13:39:08",
+    "user": "Manager",
+    "action": "UPDATE",
+    "category": "personal_loan",
+    "field": "minimum_salary",
+    "old_value": 30000,
+    "new_value": 20000
+  }
+]

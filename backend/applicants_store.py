@@ -31,6 +31,6 @@ def save_applicant(applicant_data: dict, status: str, reasons: list) -> dict:
     applicants.append(record)
 
     with open(APPLICANTS_FILE, "w") as f:
-        json.dump(applicants, f, indent=2)
+        json.dump(applicants, f, indent=2, ensure_ascii=False)
 
     return record

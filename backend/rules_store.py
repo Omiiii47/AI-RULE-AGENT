@@ -11,4 +11,4 @@ def load_rules() -> dict:
 
 def save_rules(rules: dict) -> None:
     with open(RULES_FILE, "w") as f:
-        json.dump(rules, f, indent=2)
+        json.dump(rules, f, indent=2, ensure_ascii=False)

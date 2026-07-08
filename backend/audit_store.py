@@ -34,4 +34,4 @@ def append_audit_entry(
     logs.append(entry)
 
     with open(AUDIT_FILE, "w") as f:
-        json.dump(logs, f, indent=2)
+        json.dump(logs, f, indent=2, ensure_ascii=False)

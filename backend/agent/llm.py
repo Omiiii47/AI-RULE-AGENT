@@ -7,7 +7,7 @@ load_dotenv()
 
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-MODEL_NAME = "gemini-3.1-flash-lite"  # fast + cheap, good for this use case
+MODEL_NAME = "gemini-2.0-flash"  # fast + cheap, good for this use case
 
 
 def call_llm_json(system_prompt: str, user_prompt: str) -> dict:

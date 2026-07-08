@@ -7,7 +7,7 @@ APPLICANTS_FILE = Path(__file__).parent / "applicants.json"
 
 
 def load_applicants() -> list:
-    with open(APPLICANTS_FILE, "r") as f:
+    with open(APPLICANTS_FILE, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -30,7 +30,7 @@ def save_applicant(applicant_data: dict, status: str, reasons: list) -> dict:
 
     applicants.append(record)
 
-    with open(APPLICANTS_FILE, "w") as f:
+    with open(APPLICANTS_FILE, "w", encoding="utf-8") as f:
         json.dump(applicants, f, indent=2, ensure_ascii=False)
 
     return record
